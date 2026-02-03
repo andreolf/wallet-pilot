@@ -3,354 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WalletPilot - Universal Wallet Automation for AI Agents</title>
-  <meta name="description" content="Control 10+ browser wallets with AI agents. MetaMask, Phantom, Trust Wallet, and more. EVM + Solana support.">
-  <meta property="og:title" content="WalletPilot - Universal Wallet Automation">
-  <meta property="og:description" content="Let AI agents control your browser wallets with configurable guardrails.">
-  <meta property="og:image" content="https://walletpilot.dev/og-image.png">
-  <meta name="twitter:card" content="summary_large_image">
+  <title>WalletPilot - Agent Wallet Explorer</title>
+  <meta name="description" content="Explore AI agents using browser wallets. Live transactions, leaderboards, and analytics.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0a0f;
-      --bg-card: #12121a;
-      --bg-card-hover: #1a1a25;
-      --text: #ffffff;
-      --text-muted: #8b8b9e;
-      --accent: #6366f1;
-      --accent-glow: rgba(99, 102, 241, 0.3);
-      --green: #10b981;
-      --orange: #f59e0b;
-      --red: #ef4444;
-      --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+      --bg-primary: #0c0c0c;
+      --bg-secondary: #141414;
+      --bg-tertiary: #1a1a1a;
+      --bg-hover: #222;
+      --border: #2a2a2a;
+      --text-primary: #fff;
+      --text-secondary: #888;
+      --text-tertiary: #555;
+      --accent: #00ff88;
+      --accent-dim: rgba(0, 255, 136, 0.1);
+      --accent-glow: rgba(0, 255, 136, 0.2);
+      --red: #ff4444;
+      --yellow: #ffaa00;
+      --blue: #4488ff;
+      --purple: #aa44ff;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* Layout */
+    .app {
+      display: grid;
+      grid-template-columns: 240px 1fr 320px;
+      min-height: 100vh;
     }
 
-    /* Nav */
-    nav {
-      padding: 20px 0;
-      position: fixed;
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      padding: 20px;
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(10, 10, 15, 0.8);
-      backdrop-filter: blur(20px);
-      z-index: 100;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    nav .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      height: 100vh;
+      overflow-y: auto;
     }
 
     .logo {
-      font-size: 24px;
-      font-weight: 800;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       display: flex;
       align-items: center;
       gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      color: var(--accent);
     }
 
     .logo-icon {
-      font-size: 28px;
-    }
-
-    .nav-links {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
       display: flex;
-      gap: 32px;
       align-items: center;
-    }
-
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: var(--text);
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: var(--gradient);
-      color: white;
-      border: none;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 40px var(--accent-glow);
-    }
-
-    .btn-secondary {
-      background: var(--bg-card);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-    }
-
-    /* Hero */
-    .hero {
-      padding: 160px 0 100px;
-      text-align: center;
-      position: relative;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 100px;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    .hero-badge .dot {
-      width: 8px;
-      height: 8px;
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    h1 {
-      font-size: 72px;
-      font-weight: 800;
-      line-height: 1.1;
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    h1 span {
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      font-size: 20px;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin: 0 auto 40px;
-    }
-
-    .hero-buttons {
-      display: flex;
-      gap: 16px;
       justify-content: center;
-      flex-wrap: wrap;
+      font-size: 16px;
     }
 
-    /* Stats */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      padding: 60px 0;
+    .nav-section {
+      margin-bottom: 24px;
     }
 
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 32px;
-      text-align: center;
-      transition: all 0.3s;
+    .nav-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
     }
 
-    .stat-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(99, 102, 241, 0.3);
-    }
-
-    .stat-value {
-      font-size: 48px;
-      font-weight: 800;
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .stat-label {
-      color: var(--text-muted);
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
       font-size: 14px;
-      margin-top: 8px;
-    }
-
-    /* Wallets */
-    .wallets {
-      padding: 80px 0;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
-    .section-title h2 {
-      font-size: 48px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    .section-title p {
-      color: var(--text-muted);
-      font-size: 18px;
-    }
-
-    .wallet-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-    }
-
-    .wallet-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 16px;
-      padding: 24px;
-      text-align: center;
-      transition: all 0.3s;
+      transition: all 0.15s;
       cursor: pointer;
     }
 
-    .wallet-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(99, 102, 241, 0.3);
-      background: var(--bg-card-hover);
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
     }
 
-    .wallet-icon {
-      font-size: 40px;
-      margin-bottom: 12px;
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
     }
 
-    .wallet-name {
+    .nav-item .icon { font-size: 16px; }
+
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
       font-weight: 600;
-      margin-bottom: 4px;
     }
 
-    .wallet-chains {
-      font-size: 12px;
-      color: var(--text-muted);
+    /* Stats bar */
+    .stats-bar {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
     }
 
-    .wallet-chains .evm { color: #627eea; }
-    .wallet-chains .sol { color: #9945ff; }
-
-    /* Leaderboard */
-    .leaderboard {
-      padding: 80px 0;
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 13px;
     }
 
-    .leaderboard-wrapper {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 32px;
+    .stat-row .label { color: var(--text-secondary); }
+    .stat-row .value { color: var(--accent); font-weight: 600; }
+
+    /* Main content */
+    .main {
+      padding: 24px;
+      overflow-y: auto;
     }
 
-    .leaderboard-table {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+
+    /* Search */
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 16px;
+      width: 320px;
+    }
+
+    .search-box input {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 12px 0;
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    /* Table */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
       overflow: hidden;
     }
 
-    .leaderboard-header {
+    .table-header {
       display: grid;
-      grid-template-columns: 60px 1fr 120px 120px 100px;
-      padding: 16px 24px;
-      background: rgba(255, 255, 255, 0.02);
+      grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 100px;
+      padding: 14px 20px;
+      background: var(--bg-tertiary);
       font-size: 12px;
       text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .leaderboard-row {
+    .table-row {
       display: grid;
-      grid-template-columns: 60px 1fr 120px 120px 100px;
-      padding: 20px 24px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      grid-template-columns: 60px 2fr 1fr 1fr 1fr 1fr 100px;
+      padding: 16px 20px;
       align-items: center;
-      transition: background 0.2s;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      cursor: pointer;
     }
 
-    .leaderboard-row:hover {
-      background: rgba(255, 255, 255, 0.02);
+    .table-row:hover {
+      background: var(--bg-hover);
+    }
+
+    .table-row:last-child {
+      border-bottom: none;
     }
 
     .rank {
+      font-size: 16px;
       font-weight: 700;
-      font-size: 18px;
     }
 
-    .rank.gold { color: #ffd700; }
-    .rank.silver { color: #c0c0c0; }
-    .rank.bronze { color: #cd7f32; }
+    .rank-1 { color: #ffd700; }
+    .rank-2 { color: #c0c0c0; }
+    .rank-3 { color: #cd7f32; }
 
-    .agent-info {
+    .agent-cell {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -360,58 +277,128 @@
       width: 40px;
       height: 40px;
       border-radius: 10px;
-      background: var(--gradient);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
+      font-size: 14px;
     }
 
-    .agent-name {
+    .agent-avatar.gradient-1 { background: linear-gradient(135deg, #ff6b6b, #feca57); }
+    .agent-avatar.gradient-2 { background: linear-gradient(135deg, #5f27cd, #341f97); }
+    .agent-avatar.gradient-3 { background: linear-gradient(135deg, #00d2d3, #1dd1a1); }
+    .agent-avatar.gradient-4 { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
+    .agent-avatar.gradient-5 { background: linear-gradient(135deg, #54a0ff, #2e86de); }
+
+    .agent-info h4 {
+      font-size: 14px;
       font-weight: 600;
+      margin-bottom: 2px;
     }
 
-    .agent-wallet {
+    .agent-info .wallet {
       font-size: 12px;
-      color: var(--text-muted);
+      color: var(--text-tertiary);
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .stat-positive { color: var(--green); }
-    .stat-negative { color: var(--red); }
-
-    /* Activity feed */
-    .activity-feed {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 24px;
+    .wallet-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text-secondary);
     }
 
-    .activity-title {
+    .chain-badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .chain-eth { background: rgba(98, 126, 234, 0.2); color: #627eea; }
+    .chain-sol { background: rgba(153, 69, 255, 0.2); color: #9945ff; }
+    .chain-arb { background: rgba(40, 160, 240, 0.2); color: #28a0f0; }
+    .chain-base { background: rgba(0, 82, 255, 0.2); color: #0052ff; }
+
+    .value-positive { color: var(--accent); }
+    .value-negative { color: var(--red); }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .status-active { background: var(--accent); animation: pulse 2s infinite; }
+    .status-idle { background: var(--yellow); }
+    .status-offline { background: var(--text-tertiary); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Right panel */
+    .panel {
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .panel-section {
+      margin-bottom: 24px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .panel-title h3 {
+      font-size: 14px;
       font-weight: 600;
-      margin-bottom: 20px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .activity-title .live {
+    .panel-title .live {
       width: 8px;
       height: 8px;
-      background: var(--green);
+      background: var(--accent);
       border-radius: 50%;
       animation: pulse 2s infinite;
     }
 
+    .panel-title a {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Activity feed */
     .activity-item {
       display: flex;
       gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      transition: background 0.15s;
     }
 
-    .activity-item:last-child {
-      border-bottom: none;
+    .activity-item:hover {
+      background: var(--bg-hover);
     }
 
     .activity-icon {
@@ -422,540 +409,475 @@
       align-items: center;
       justify-content: center;
       font-size: 14px;
+      flex-shrink: 0;
     }
 
-    .activity-icon.swap { background: rgba(99, 102, 241, 0.2); }
-    .activity-icon.send { background: rgba(16, 185, 129, 0.2); }
-    .activity-icon.sign { background: rgba(245, 158, 11, 0.2); }
+    .activity-icon.swap { background: rgba(0, 255, 136, 0.15); }
+    .activity-icon.send { background: rgba(68, 136, 255, 0.15); }
+    .activity-icon.sign { background: rgba(255, 170, 0, 0.15); }
+    .activity-icon.connect { background: rgba(170, 68, 255, 0.15); }
 
-    .activity-content {
-      flex: 1;
-    }
+    .activity-content { flex: 1; min-width: 0; }
 
     .activity-text {
-      font-size: 14px;
-    }
-
-    .activity-time {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* Features */
-    .features {
-      padding: 80px 0;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 32px;
-      transition: all 0.3s;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(99, 102, 241, 0.3);
-    }
-
-    .feature-icon {
-      font-size: 40px;
-      margin-bottom: 20px;
-    }
-
-    .feature-card h3 {
-      font-size: 20px;
-      margin-bottom: 12px;
-    }
-
-    .feature-card p {
-      color: var(--text-muted);
-      font-size: 15px;
-    }
-
-    /* CTA */
-    .cta {
-      padding: 100px 0;
-      text-align: center;
-    }
-
-    .cta-box {
-      background: var(--gradient);
-      border-radius: 24px;
-      padding: 80px;
-      position: relative;
+      font-size: 13px;
+      margin-bottom: 4px;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .cta-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    }
+    .activity-text strong { color: var(--accent); }
 
-    .cta-box h2 {
-      font-size: 48px;
-      margin-bottom: 16px;
-      position: relative;
-    }
-
-    .cta-box p {
-      font-size: 20px;
-      opacity: 0.9;
-      margin-bottom: 32px;
-      position: relative;
-    }
-
-    .cta-box .btn {
-      position: relative;
-    }
-
-    /* Footer */
-    footer {
-      padding: 40px 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      text-align: center;
-      color: var(--text-muted);
-    }
-
-    .footer-links {
+    .activity-meta {
       display: flex;
-      justify-content: center;
-      gap: 32px;
-      margin-bottom: 20px;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-tertiary);
     }
 
-    .footer-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
+    /* Wallet cards */
+    .wallet-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
 
-    .footer-links a:hover {
-      color: var(--text);
+    .wallet-card {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.15s;
+      cursor: pointer;
     }
 
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .wallet-grid { grid-template-columns: repeat(3, 1fr); }
-      .leaderboard-wrapper { grid-template-columns: 1fr; }
-      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+    .wallet-card:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent);
     }
 
-    @media (max-width: 768px) {
-      h1 { font-size: 48px; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .wallet-grid { grid-template-columns: repeat(2, 1fr); }
-      .feature-grid { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .leaderboard-header, .leaderboard-row {
-        grid-template-columns: 40px 1fr 80px;
+    .wallet-card .icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .wallet-card .name {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .wallet-card .count {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Charts placeholder */
+    .chart-placeholder {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      height: 120px;
+      display: flex;
+      align-items: flex-end;
+      padding: 12px;
+      gap: 4px;
+    }
+
+    .chart-bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 4px 4px 0 0;
+      opacity: 0.6;
+      transition: all 0.2s;
+    }
+
+    .chart-bar:hover {
+      opacity: 1;
+    }
+
+    /* Mobile */
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar, .panel { display: none; }
+      .table-header, .table-row {
+        grid-template-columns: 40px 1fr 80px 80px;
       }
-      .leaderboard-header > *:nth-child(4),
-      .leaderboard-header > *:nth-child(5),
-      .leaderboard-row > *:nth-child(4),
-      .leaderboard-row > *:nth-child(5) {
+      .table-header > *:nth-child(4),
+      .table-header > *:nth-child(5),
+      .table-header > *:nth-child(6),
+      .table-row > *:nth-child(4),
+      .table-row > *:nth-child(5),
+      .table-row > *:nth-child(6) {
         display: none;
       }
     }
   </style>
 </head>
 <body>
-  <nav>
-    <div class="container">
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
       <div class="logo">
-        <span class="logo-icon">🚀</span>
+        <div class="logo-icon">🚀</div>
         WalletPilot
       </div>
-      <div class="nav-links">
-        <a href="#wallets">Wallets</a>
-        <a href="#leaderboard">Leaderboard</a>
-        <a href="#features">Features</a>
-        <a href="https://github.com/andreolf/wallet-pilot" target="_blank">GitHub</a>
-        <a href="https://clawhub.ai/skills/walletpilot" class="btn btn-primary">Get Started</a>
-      </div>
-    </div>
-  </nav>
 
-  <section class="hero">
-    <div class="container">
-      <div class="hero-badge">
-        <span class="dot"></span>
-        <span>Now supporting 10 wallets</span>
-      </div>
-      <h1>AI Agents Meet<br><span>Crypto Wallets</span></h1>
-      <p>Universal browser wallet automation for AI agents. Control MetaMask, Phantom, Trust Wallet and more with configurable guardrails.</p>
-      <div class="hero-buttons">
-        <a href="https://clawhub.ai/skills/walletpilot" class="btn btn-primary">
-          Install Skill
-          <span>→</span>
+      <nav class="nav-section">
+        <div class="nav-title">Explore</div>
+        <a href="#" class="nav-item active">
+          <span class="icon">📊</span>
+          Leaderboard
+          <span class="badge">Live</span>
         </a>
-        <a href="https://github.com/andreolf/wallet-pilot" class="btn btn-secondary">
-          <span>⭐</span>
-          Star on GitHub
+        <a href="#" class="nav-item">
+          <span class="icon">🤖</span>
+          Agents
+          <span class="badge">156</span>
         </a>
-      </div>
-    </div>
-  </section>
-
-  <section class="container">
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-wallets">10</div>
-        <div class="stat-label">Supported Wallets</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-txs">2.4K</div>
-        <div class="stat-label">Transactions Today</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-volume">$847K</div>
-        <div class="stat-label">Volume (24h)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-agents">156</div>
-        <div class="stat-label">Active Agents</div>
-      </div>
-    </div>
-  </section>
-
-  <section class="wallets" id="wallets">
-    <div class="container">
-      <div class="section-title">
-        <h2>10 Wallets. One Skill.</h2>
-        <p>From MetaMask to Phantom, control any browser wallet with a unified interface.</p>
-      </div>
-      <div class="wallet-grid">
-        <div class="wallet-card">
-          <div class="wallet-icon">🦊</div>
-          <div class="wallet-name">MetaMask</div>
-          <div class="wallet-chains"><span class="evm">EVM</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">👻</div>
-          <div class="wallet-name">Phantom</div>
-          <div class="wallet-chains"><span class="evm">EVM</span> + <span class="sol">Solana</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">🛡️</div>
-          <div class="wallet-name">Trust Wallet</div>
-          <div class="wallet-chains"><span class="evm">EVM</span> + <span class="sol">Solana</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">🐰</div>
-          <div class="wallet-name">Rabby</div>
-          <div class="wallet-chains"><span class="evm">EVM</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">💎</div>
-          <div class="wallet-name">OKX Wallet</div>
-          <div class="wallet-chains"><span class="evm">EVM</span> + <span class="sol">Solana</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">🌈</div>
-          <div class="wallet-name">Rainbow</div>
-          <div class="wallet-chains"><span class="evm">EVM</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">🔵</div>
-          <div class="wallet-name">Coinbase</div>
-          <div class="wallet-chains"><span class="evm">EVM</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">📊</div>
-          <div class="wallet-name">Zerion</div>
-          <div class="wallet-chains"><span class="evm">EVM</span> + <span class="sol">Solana</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">🎒</div>
-          <div class="wallet-name">Backpack</div>
-          <div class="wallet-chains"><span class="evm">EVM</span> + <span class="sol">Solana</span></div>
-        </div>
-        <div class="wallet-card">
-          <div class="wallet-icon">🚀</div>
-          <div class="wallet-name">Exodus</div>
-          <div class="wallet-chains"><span class="evm">EVM</span> + <span class="sol">Solana</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="leaderboard" id="leaderboard">
-    <div class="container">
-      <div class="section-title">
-        <h2>Agent Leaderboard</h2>
-        <p>Top performing AI agents using WalletPilot</p>
-      </div>
-      <div class="leaderboard-wrapper">
-        <div class="leaderboard-table">
-          <div class="leaderboard-header">
-            <div>Rank</div>
-            <div>Agent</div>
-            <div>Volume (24h)</div>
-            <div>Transactions</div>
-            <div>P&L</div>
-          </div>
-          <div class="leaderboard-row">
-            <div class="rank gold">1</div>
-            <div class="agent-info">
-              <div class="agent-avatar">A</div>
-              <div>
-                <div class="agent-name">AlphaTrader</div>
-                <div class="agent-wallet">MetaMask • 0x1a2b...3c4d</div>
-              </div>
-            </div>
-            <div>$124,500</div>
-            <div>342</div>
-            <div class="stat-positive">+12.4%</div>
-          </div>
-          <div class="leaderboard-row">
-            <div class="rank silver">2</div>
-            <div class="agent-info">
-              <div class="agent-avatar">D</div>
-              <div>
-                <div class="agent-name">DeFiBot</div>
-                <div class="agent-wallet">Phantom • 7xKp...9mNq</div>
-              </div>
-            </div>
-            <div>$98,200</div>
-            <div>287</div>
-            <div class="stat-positive">+8.7%</div>
-          </div>
-          <div class="leaderboard-row">
-            <div class="rank bronze">3</div>
-            <div class="agent-info">
-              <div class="agent-avatar">Y</div>
-              <div>
-                <div class="agent-name">YieldHunter</div>
-                <div class="agent-wallet">Rabby • 0x5e6f...7g8h</div>
-              </div>
-            </div>
-            <div>$76,800</div>
-            <div>198</div>
-            <div class="stat-positive">+6.2%</div>
-          </div>
-          <div class="leaderboard-row">
-            <div class="rank">4</div>
-            <div class="agent-info">
-              <div class="agent-avatar">S</div>
-              <div>
-                <div class="agent-name">SwapMaster</div>
-                <div class="agent-wallet">OKX • 0x9i0j...1k2l</div>
-              </div>
-            </div>
-            <div>$54,300</div>
-            <div>156</div>
-            <div class="stat-positive">+4.1%</div>
-          </div>
-          <div class="leaderboard-row">
-            <div class="rank">5</div>
-            <div class="agent-info">
-              <div class="agent-avatar">A</div>
-              <div>
-                <div class="agent-name">ArbBot</div>
-                <div class="agent-wallet">Trust • 0x3m4n...5o6p</div>
-              </div>
-            </div>
-            <div>$42,100</div>
-            <div>124</div>
-            <div class="stat-negative">-1.2%</div>
-          </div>
-        </div>
-        <div class="activity-feed">
-          <div class="activity-title">
-            <span class="live"></span>
-            Live Activity
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon swap">🔄</div>
-            <div class="activity-content">
-              <div class="activity-text"><strong>AlphaTrader</strong> swapped 2.5 ETH → USDC</div>
-              <div class="activity-time">12 seconds ago</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon send">📤</div>
-            <div class="activity-content">
-              <div class="activity-text"><strong>DeFiBot</strong> sent 500 USDC</div>
-              <div class="activity-time">34 seconds ago</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon swap">🔄</div>
-            <div class="activity-content">
-              <div class="activity-text"><strong>YieldHunter</strong> swapped 1000 USDC → SOL</div>
-              <div class="activity-time">1 minute ago</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon sign">✍️</div>
-            <div class="activity-content">
-              <div class="activity-text"><strong>SwapMaster</strong> signed permit</div>
-              <div class="activity-time">2 minutes ago</div>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="activity-icon swap">🔄</div>
-            <div class="activity-content">
-              <div class="activity-text"><strong>ArbBot</strong> swapped 0.8 ETH → WBTC</div>
-              <div class="activity-time">3 minutes ago</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="features" id="features">
-    <div class="container">
-      <div class="section-title">
-        <h2>Built for Safety</h2>
-        <p>Configurable guardrails keep your funds secure</p>
-      </div>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="feature-icon">💰</div>
-          <h3>Spend Limits</h3>
-          <p>Set daily and per-transaction limits. The agent can never exceed your defined thresholds.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">⛓️</div>
-          <h3>Chain Allowlist</h3>
-          <p>Restrict operations to specific chains. Only Ethereum and Polygon? No problem.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📋</div>
-          <h3>Protocol Allowlist</h3>
-          <p>Whitelist specific protocols like Uniswap or 1inch. Block everything else.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🚫</div>
-          <h3>Method Blocking</h3>
-          <p>Block risky methods like unlimited approvals. Fine-grained control over what the agent can do.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">👆</div>
-          <h3>Approval Thresholds</h3>
-          <p>Require manual approval for transactions above a certain value or for specific methods.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📝</div>
-          <h3>Full Audit Log</h3>
-          <p>Every transaction intent and outcome is logged. Complete visibility into agent activity.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta">
-    <div class="container">
-      <div class="cta-box">
-        <h2>Ready to automate?</h2>
-        <p>Get started with WalletPilot in under 5 minutes.</p>
-        <a href="https://clawhub.ai/skills/walletpilot" class="btn btn-secondary">
-          Install from ClawHub
-          <span>→</span>
+        <a href="#" class="nav-item">
+          <span class="icon">💳</span>
+          Wallets
+          <span class="badge">10</span>
         </a>
-      </div>
-    </div>
-  </section>
+        <a href="#" class="nav-item">
+          <span class="icon">📈</span>
+          Analytics
+        </a>
+      </nav>
 
-  <footer>
-    <div class="container">
-      <div class="footer-links">
-        <a href="https://github.com/andreolf/wallet-pilot">GitHub</a>
-        <a href="https://clawhub.ai/skills/walletpilot">ClawHub</a>
-        <a href="https://twitter.com/walletpilot">Twitter</a>
-        <a href="https://discord.gg/walletpilot">Discord</a>
+      <nav class="nav-section">
+        <div class="nav-title">Docs</div>
+        <a href="https://github.com/andreolf/wallet-pilot" class="nav-item">
+          <span class="icon">📖</span>
+          Documentation
+        </a>
+        <a href="https://github.com/andreolf/wallet-pilot" class="nav-item">
+          <span class="icon">💻</span>
+          GitHub
+        </a>
+        <a href="https://clawhub.ai/skills/walletpilot" class="nav-item">
+          <span class="icon">🦞</span>
+          ClawHub
+        </a>
+      </nav>
+
+      <div class="stats-bar">
+        <div class="stat-row">
+          <span class="label">24h Volume</span>
+          <span class="value mono">$847,234</span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Transactions</span>
+          <span class="value mono">2,412</span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Active Agents</span>
+          <span class="value mono">156</span>
+        </div>
       </div>
-      <p>Built with ❤️ for the AI agent community</p>
-    </div>
-  </footer>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="header">
+        <h1>Agent Leaderboard</h1>
+        <div class="header-actions">
+          <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="Search agents, wallets, txs...">
+          </div>
+          <a href="https://github.com/andreolf/wallet-pilot" class="btn btn-secondary">
+            ⭐ Star
+          </a>
+          <a href="https://clawhub.ai/skills/walletpilot" class="btn btn-primary">
+            Install Skill
+          </a>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-header">
+          <div>#</div>
+          <div>Agent</div>
+          <div>Wallet</div>
+          <div>Chain</div>
+          <div>Volume (24h)</div>
+          <div>P&L</div>
+          <div>Status</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank rank-1">1</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-1">A</div>
+            <div class="agent-info">
+              <h4>AlphaTrader</h4>
+              <span class="wallet">0x1a2b...3c4d</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">🦊 MetaMask</span></div>
+          <div><span class="chain-badge chain-eth">ETH</span></div>
+          <div class="mono">$124,500</div>
+          <div class="mono value-positive">+12.4%</div>
+          <div><span class="status-dot status-active"></span>Active</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank rank-2">2</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-2">D</div>
+            <div class="agent-info">
+              <h4>DeFiBot</h4>
+              <span class="wallet">7xKp...9mNq</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">👻 Phantom</span></div>
+          <div><span class="chain-badge chain-sol">SOL</span></div>
+          <div class="mono">$98,200</div>
+          <div class="mono value-positive">+8.7%</div>
+          <div><span class="status-dot status-active"></span>Active</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank rank-3">3</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-3">Y</div>
+            <div class="agent-info">
+              <h4>YieldHunter</h4>
+              <span class="wallet">0x5e6f...7g8h</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">🐰 Rabby</span></div>
+          <div><span class="chain-badge chain-arb">ARB</span></div>
+          <div class="mono">$76,800</div>
+          <div class="mono value-positive">+6.2%</div>
+          <div><span class="status-dot status-active"></span>Active</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank">4</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-4">S</div>
+            <div class="agent-info">
+              <h4>SwapMaster</h4>
+              <span class="wallet">0x9i0j...1k2l</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">💎 OKX</span></div>
+          <div><span class="chain-badge chain-base">BASE</span></div>
+          <div class="mono">$54,300</div>
+          <div class="mono value-positive">+4.1%</div>
+          <div><span class="status-dot status-idle"></span>Idle</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank">5</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-5">A</div>
+            <div class="agent-info">
+              <h4>ArbBot</h4>
+              <span class="wallet">0x3m4n...5o6p</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">🛡️ Trust</span></div>
+          <div><span class="chain-badge chain-eth">ETH</span></div>
+          <div class="mono">$42,100</div>
+          <div class="mono value-negative">-1.2%</div>
+          <div><span class="status-dot status-active"></span>Active</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank">6</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-1">M</div>
+            <div class="agent-info">
+              <h4>MEVHunter</h4>
+              <span class="wallet">0xabcd...ef01</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">🦊 MetaMask</span></div>
+          <div><span class="chain-badge chain-eth">ETH</span></div>
+          <div class="mono">$38,900</div>
+          <div class="mono value-positive">+3.8%</div>
+          <div><span class="status-dot status-active"></span>Active</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank">7</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-2">N</div>
+            <div class="agent-info">
+              <h4>NFTSniper</h4>
+              <span class="wallet">GhTk...Lm2P</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">👻 Phantom</span></div>
+          <div><span class="chain-badge chain-sol">SOL</span></div>
+          <div class="mono">$31,200</div>
+          <div class="mono value-positive">+5.4%</div>
+          <div><span class="status-dot status-offline"></span>Offline</div>
+        </div>
+
+        <div class="table-row">
+          <div class="rank">8</div>
+          <div class="agent-cell">
+            <div class="agent-avatar gradient-3">L</div>
+            <div class="agent-info">
+              <h4>LiquidityBot</h4>
+              <span class="wallet">0x7890...1234</span>
+            </div>
+          </div>
+          <div><span class="wallet-badge">📊 Zerion</span></div>
+          <div><span class="chain-badge chain-arb">ARB</span></div>
+          <div class="mono">$28,400</div>
+          <div class="mono value-positive">+2.1%</div>
+          <div><span class="status-dot status-idle"></span>Idle</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Right panel -->
+    <aside class="panel">
+      <div class="panel-section">
+        <div class="panel-title">
+          <h3><span class="live"></span> Live Transactions</h3>
+          <a href="#">View all</a>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon swap">🔄</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>AlphaTrader</strong> swapped 2.5 ETH → USDC</div>
+            <div class="activity-meta">
+              <span>$4,825</span>
+              <span>12s ago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon send">📤</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>DeFiBot</strong> sent 500 USDC</div>
+            <div class="activity-meta">
+              <span>$500</span>
+              <span>34s ago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon swap">🔄</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>YieldHunter</strong> swapped 1000 USDC → SOL</div>
+            <div class="activity-meta">
+              <span>$1,000</span>
+              <span>1m ago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon connect">🔗</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>SwapMaster</strong> connected to Uniswap</div>
+            <div class="activity-meta">
+              <span>-</span>
+              <span>2m ago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon sign">✍️</div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>ArbBot</strong> signed permit</div>
+            <div class="activity-meta">
+              <span>-</span>
+              <span>3m ago</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-title">
+          <h3>Volume (7d)</h3>
+        </div>
+        <div class="chart-placeholder">
+          <div class="chart-bar" style="height: 40%"></div>
+          <div class="chart-bar" style="height: 60%"></div>
+          <div class="chart-bar" style="height: 45%"></div>
+          <div class="chart-bar" style="height: 80%"></div>
+          <div class="chart-bar" style="height: 65%"></div>
+          <div class="chart-bar" style="height: 90%"></div>
+          <div class="chart-bar" style="height: 100%"></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-title">
+          <h3>Supported Wallets</h3>
+          <a href="#">All 10</a>
+        </div>
+        <div class="wallet-grid">
+          <div class="wallet-card">
+            <div class="icon">🦊</div>
+            <div class="name">MetaMask</div>
+            <div class="count">67 agents</div>
+          </div>
+          <div class="wallet-card">
+            <div class="icon">👻</div>
+            <div class="name">Phantom</div>
+            <div class="count">34 agents</div>
+          </div>
+          <div class="wallet-card">
+            <div class="icon">🐰</div>
+            <div class="name">Rabby</div>
+            <div class="count">22 agents</div>
+          </div>
+          <div class="wallet-card">
+            <div class="icon">💎</div>
+            <div class="name">OKX</div>
+            <div class="count">18 agents</div>
+          </div>
+          <div class="wallet-card">
+            <div class="icon">🛡️</div>
+            <div class="name">Trust</div>
+            <div class="count">8 agents</div>
+          </div>
+          <div class="wallet-card">
+            <div class="icon">🔵</div>
+            <div class="name">Coinbase</div>
+            <div class="count">7 agents</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
 
   <script>
-    // Animate stats
-    function animateValue(id, start, end, duration, suffix = '') {
-      const obj = document.getElementById(id);
-      const range = end - start;
-      const startTime = performance.now();
-      
-      function update(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const value = Math.floor(start + range * progress);
-        
-        if (id === 'stat-volume') {
-          obj.textContent = '$' + value.toLocaleString() + 'K';
-        } else if (id === 'stat-txs') {
-          obj.textContent = (value / 1000).toFixed(1) + 'K';
-        } else {
-          obj.textContent = value + suffix;
-        }
-        
-        if (progress < 1) {
-          requestAnimationFrame(update);
-        }
-      }
-      
-      requestAnimationFrame(update);
-    }
-
-    // Trigger animations when stats section is visible
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          animateValue('stat-wallets', 0, 10, 1000);
-          animateValue('stat-txs', 0, 2400, 1500);
-          animateValue('stat-volume', 0, 847, 2000);
-          animateValue('stat-agents', 0, 156, 1500);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    document.querySelectorAll('.stat-card').forEach(card => {
-      observer.observe(card);
-    });
-
-    // Simulate live activity updates
+    // Simulate live updates
     const activities = [
-      { icon: 'swap', text: '<strong>AlphaTrader</strong> swapped 1.2 ETH → USDC' },
-      { icon: 'send', text: '<strong>DeFiBot</strong> sent 250 USDC' },
-      { icon: 'swap', text: '<strong>YieldHunter</strong> swapped 500 USDC → SOL' },
-      { icon: 'sign', text: '<strong>SwapMaster</strong> signed message' },
-      { icon: 'swap', text: '<strong>ArbBot</strong> swapped 0.5 ETH → WBTC' },
+      { icon: 'swap', agent: 'AlphaTrader', text: 'swapped 1.2 ETH → USDC', value: '$2,315' },
+      { icon: 'send', agent: 'DeFiBot', text: 'sent 250 USDC', value: '$250' },
+      { icon: 'swap', agent: 'YieldHunter', text: 'swapped 500 USDC → SOL', value: '$500' },
+      { icon: 'sign', agent: 'SwapMaster', text: 'signed message', value: '-' },
+      { icon: 'swap', agent: 'ArbBot', text: 'swapped 0.5 ETH → WBTC', value: '$965' },
+      { icon: 'connect', agent: 'MEVHunter', text: 'connected to 1inch', value: '-' },
     ];
 
     setInterval(() => {
       const activity = activities[Math.floor(Math.random() * activities.length)];
-      const feed = document.querySelector('.activity-feed');
-      const items = feed.querySelectorAll('.activity-item');
+      const container = document.querySelector('.panel-section');
+      const items = container.querySelectorAll('.activity-item');
       
-      // Update first item and rotate times
+      // Update times
       items.forEach((item, i) => {
-        const timeEl = item.querySelector('.activity-time');
-        if (i === 0) {
-          timeEl.textContent = 'Just now';
-        } else if (i === 1) {
-          timeEl.textContent = '12 seconds ago';
-        } else if (i === 2) {
-          timeEl.textContent = '34 seconds ago';
-        } else if (i === 3) {
-          timeEl.textContent = '1 minute ago';
-        } else {
-          timeEl.textContent = '2 minutes ago';
-        }
+        const timeEl = item.querySelector('.activity-meta span:last-child');
+        const times = ['Just now', '12s ago', '34s ago', '1m ago', '2m ago'];
+        timeEl.textContent = times[i] || '3m ago';
       });
     }, 5000);
   </script>
