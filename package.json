@@ -1,0 +1,44 @@
+{
+  "name": "wallet-pilot",
+  "version": "0.1.0",
+  "description": "Universal browser wallet automation for AI agents",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "test": "vitest",
+    "lint": "eslint src/",
+    "setup": "tsx scripts/setup.ts",
+    "wallets": "tsx src/index.ts wallets"
+  },
+  "keywords": [
+    "wallet",
+    "crypto",
+    "automation",
+    "ai",
+    "agent",
+    "metamask",
+    "rabby",
+    "coinbase",
+    "phantom",
+    "rainbow",
+    "ethereum",
+    "solana",
+    "web3",
+    "defi"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.48.0",
+    "viem": "^2.21.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^1.6.0"
+  }
+}

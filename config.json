@@ -1,0 +1,15 @@
+{
+  "wallet": {
+    "provider": "metamask",
+    "extensionPath": null
+  },
+  "paths": {
+    "profile": "~/.wallet-pilot/chrome-profile",
+    "logs": "~/.wallet-pilot/logs"
+  },
+  "timeouts": {
+    "popup": 30000,
+    "transaction": 120000,
+    "navigation": 30000
+  }
+}

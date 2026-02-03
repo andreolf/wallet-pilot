@@ -1,0 +1,27 @@
+{
+  "$schema": "./src/schemas/permissions.schema.json",
+  "version": "1.0",
+  "wallet": "",
+  "constraints": {
+    "spendLimit": {
+      "daily": "50000000",
+      "perTx": "10000000",
+      "token": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+    },
+    "allowedChains": [1, 137, 42161, 10, 8453, 0],
+    "allowedProtocols": [
+      "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+      "0xE592427A0AEce92De3Edee1F18E0157C05861564",
+      "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
+      "0x1111111254EEB25477B68fb85Ed929f73A960582"
+    ],
+    "allowedActions": ["connect", "swap", "send", "sign", "balance", "history"],
+    "blockedMethods": [],
+    "requireApproval": {
+      "above": "25000000",
+      "methods": ["multicall", "execute", "permitTransferFrom"]
+    }
+  },
+  "expiry": null,
+  "revoked": false
+}
